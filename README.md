@@ -18,7 +18,7 @@ The project is meant for academic demonstration and learning. It shows the end-t
 
 - OpenCV
 - Flask
--Numpu
+- -Numpy
 - Python
 - SQLite
 - HTML, CSS, and browser camera APIs

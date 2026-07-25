@@ -1,4 +1,5 @@
-# Iris_project-IrisPass
+
+# IrisPass
 
 IrisPass is a Flask-based biometric authentication demo that uses a webcam capture, OpenCV iris localization, handcrafted iris texture features, and a lightweight pattern-matching pipeline to simulate iris login.
 
@@ -18,7 +19,7 @@ The project is meant for academic demonstration and learning. It shows the end-t
 
 - OpenCV
 - Flask
-- -Numpy
+-Numpu
 - Python
 - SQLite
 - HTML, CSS, and browser camera APIs

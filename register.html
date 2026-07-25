@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IrisPass | Register Biometric Identity</title>
+    <style>
+        :root { --bg-night:#06111a; --bg-steel:#10283c; --panel:rgba(8,18,31,.78); --panel-soft:rgba(255,255,255,.04); --line:rgba(146,197,255,.18); --line-strong:rgba(146,197,255,.32); --text:#eef6ff; --muted:#9bb4cf; --accent:#79d0ff; --accent-strong:#1aaeff; --alert:#ffb7c1; --shadow:0 30px 90px rgba(0,0,0,.42); }
+        * { box-sizing:border-box; }
+        body { margin:0; min-height:100vh; font-family:"Aptos","Trebuchet MS",sans-serif; color:var(--text); background:radial-gradient(circle at top left,rgba(26,174,255,.22),transparent 28%),radial-gradient(circle at bottom right,rgba(75,127,255,.16),transparent 24%),linear-gradient(135deg,var(--bg-night),var(--bg-steel)); display:grid; place-items:center; padding:28px; }
+        .shell { width:min(1120px,100%); display:grid; grid-template-columns:1.08fr .92fr; border:1px solid var(--line); border-radius:30px; overflow:hidden; background:rgba(3,10,18,.66); box-shadow:var(--shadow); backdrop-filter:blur(20px); }
+        .hero,.panel { padding:42px; }
+        .hero { border-right:1px solid var(--line); }
+        .brand { display:flex; align-items:center; gap:12px; margin-bottom:24px; }
+        .brand-mark { width:42px; height:42px; border-radius:14px; display:grid; place-items:center; background:linear-gradient(135deg,rgba(121,208,255,.18),rgba(26,174,255,.28)); border:1px solid var(--line-strong); font-weight:700; }
+        .brand-copy small { display:block; color:var(--muted); letter-spacing:.12em; text-transform:uppercase; font-size:11px; }
+        .eyebrow { display:inline-flex; align-items:center; gap:8px; padding:8px 14px; border-radius:999px; background:rgba(255,255,255,.04); border:1px solid var(--line); color:var(--accent); font-size:12px; letter-spacing:.08em; text-transform:uppercase; }
+        h1 { margin:22px 0 16px; font-family:"Cambria","Times New Roman",serif; font-size:clamp(2.5rem,5vw,4rem); line-height:.98; letter-spacing:-.03em; }
+        p { margin:0 0 16px; color:var(--muted); line-height:1.75; }
+        .metrics,.flow { display:grid; gap:14px; }
+        .metrics { grid-template-columns:repeat(3,1fr); margin-top:30px; }
+        .metric,.flow-card { padding:18px; border-radius:20px; border:1px solid var(--line); background:var(--panel-soft); }
+        .metric strong,.flow-card strong { display:block; margin-bottom:8px; color:var(--text); }
+        .flow { margin-top:28px; }
+        .panel h2 { margin:0 0 8px; font-size:1.7rem; }
+        .panel-intro { margin-bottom:24px; }
+        .alert { margin-bottom:18px; padding:13px 15px; border-radius:16px; background:rgba(255,183,193,.1); border:1px solid rgba(255,183,193,.34); color:#ffe2e7; }
+        label { display:block; margin-bottom:10px; color:var(--muted); font-size:14px; }
+        input { width:100%; padding:15px 16px; border-radius:16px; border:1px solid rgba(155,180,207,.22); background:rgba(255,255,255,.05); color:var(--text); font-size:15px; outline:none; margin-bottom:16px; }
+        input:focus { border-color:rgba(121,208,255,.76); box-shadow:0 0 0 4px rgba(26,174,255,.12); }
+        .camera-frame { position:relative; border-radius:22px; overflow:hidden; border:1px solid rgba(155,180,207,.2); background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.02)); margin-bottom:16px; }
+        .camera-overlay { position:absolute; inset:18px; pointer-events:none; }
+        .camera-overlay::before { content:""; position:absolute; left:12%; right:12%; top:-10%; height:24%; background:linear-gradient(180deg,rgba(121,208,255,0),rgba(121,208,255,.24),rgba(121,208,255,0)); animation:scan 2.8s linear infinite; }
+        .camera-frame.scanning .camera-overlay::before { animation-duration:1.5s; }
+        .iris-ring { position:absolute; width:170px; height:170px; border:2px solid rgba(121,208,255,.44); border-radius:50%; left:50%; top:31%; transform:translate(-50%,-50%); box-shadow:0 0 0 18px rgba(121,208,255,.06), inset 0 0 20px rgba(121,208,255,.12); }
+        .camera-frame.ready .iris-ring { border-color:rgba(143,255,227,.82); box-shadow:0 0 0 18px rgba(121,208,255,.08), 0 0 24px rgba(143,255,227,.28), inset 0 0 20px rgba(143,255,227,.12); }
+        .iris-ring::before, .iris-ring::after { content:""; position:absolute; background:rgba(121,208,255,.55); }
+        .iris-ring::before { width:1px; top:-18px; bottom:-18px; left:50%; transform:translateX(-50%); }
+        .iris-ring::after { height:1px; left:-18px; right:-18px; top:50%; transform:translateY(-50%); }
+        .camera-note { position:absolute; left:16px; bottom:16px; padding:8px 12px; border-radius:999px; background:rgba(4,12,20,.8); border:1px solid rgba(121,208,255,.24); color:var(--text); font-size:12px; }
+        .boot-sequence { position:absolute; inset:0; display:grid; place-items:center; padding:20px; background:radial-gradient(circle,rgba(7,24,38,.32),rgba(2,8,15,.84)); text-align:center; transition:opacity .35s ease; }
+        .boot-sequence.hidden { opacity:0; pointer-events:none; }
+        .boot-card { width:min(300px,100%); padding:18px; border-radius:22px; border:1px solid rgba(121,208,255,.28); background:rgba(5,17,28,.72); box-shadow:0 14px 36px rgba(0,0,0,.28); }
+        .boot-label { color:var(--accent); font-size:12px; letter-spacing:.14em; text-transform:uppercase; }
+        .boot-title { margin:10px 0 6px; font-size:1.15rem; font-weight:700; }
+        .boot-text { color:var(--muted); font-size:13px; line-height:1.6; }
+        .boot-bar { height:8px; margin-top:14px; border-radius:999px; overflow:hidden; background:rgba(255,255,255,.08); }
+        .boot-bar span { display:block; width:100%; height:100%; transform:translateX(-100%); background:linear-gradient(90deg,rgba(121,208,255,.08),rgba(121,208,255,.86),rgba(183,237,255,.9)); animation:bootfill 1.8s ease forwards; }
+        .capture-metrics { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:16px; }
+        .metric-pill { padding:12px 14px; border-radius:16px; border:1px solid rgba(155,180,207,.16); background:rgba(255,255,255,.04); }
+        .metric-pill strong { display:block; margin-bottom:6px; font-size:12px; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); }
+        .metric-value { color:var(--text); font-weight:700; }
+        .capture-options { display:flex; justify-content:space-between; align-items:center; gap:12px; margin:-4px 0 16px; color:var(--muted); font-size:13px; }
+        .capture-options label { display:flex; align-items:center; gap:8px; margin:0; font-size:13px; }
+        .capture-options input { width:auto; margin:0; }
+        .submit-loader { display:none; width:18px; height:18px; border-radius:50%; border:2px solid rgba(7,19,29,.18); border-top-color:#07131d; animation:spin 0.8s linear infinite; }
+        .primary.loading { display:flex; justify-content:center; align-items:center; gap:10px; pointer-events:none; opacity:.92; }
+        .primary.loading .submit-loader { display:inline-block; }
+        video,canvas { width:100%; display:block; min-height:270px; background:#031019; object-fit:cover; }
+        .camera-actions { display:flex; gap:12px; margin-bottom:16px; }
+        button { width:100%; padding:15px 16px; border:none; border-radius:16px; font-weight:700; font-size:15px; cursor:pointer; transition:transform .2s ease; }
+        button:hover { transform:translateY(-1px); }
+        .primary { background:linear-gradient(135deg,var(--accent),var(--accent-strong)); color:#07131d; box-shadow:0 14px 34px rgba(26,174,255,.22); }
+        .secondary { background:rgba(255,255,255,.07); color:var(--text); border:1px solid rgba(155,180,207,.16); }
+        .status { min-height:24px; margin-bottom:14px; color:var(--muted); font-size:14px; }
+        .panel-footer { margin-top:16px; display:flex; justify-content:space-between; align-items:center; gap:16px; color:var(--muted); font-size:14px; }
+        .panel-footer a { color:var(--accent); text-decoration:none; }
+        @keyframes scan { from { transform:translateY(0); } to { transform:translateY(430%); } }
+        @keyframes spin { to { transform:rotate(360deg); } }
+        @keyframes bootfill { to { transform:translateX(0); } }
+        @media (max-width:920px) { .shell { grid-template-columns:1fr; } .hero { border-right:none; border-bottom:1px solid var(--line); } .metrics { grid-template-columns:1fr; } }
+    </style>
+</head>
+<body>
+    <main class="shell">
+        <section class="hero">
+            <div class="brand">
+                <div class="brand-mark">IP</div>
+                <div class="brand-copy">
+                    <small>Enterprise Biometric Suite</small>
+                    <strong>IrisPass Access Platform</strong>
+                </div>
+            </div>
+            <span class="eyebrow">Biometric Enrollment</span>
+            <h1>Register your iris identity.</h1>
+            <p>Create a secure biometric profile with a single live iris capture.</p>
+        </section>
+        <section class="panel">
+            <h2>Register Biometric Identity</h2>
+            <p class="panel-intro">Create a user profile and capture a high-quality iris sample for enrollment.</p>
+            {% if error %}<div class="alert">{{ error }}</div>{% endif %}
+            <form id="iris-form" method="POST" action="/register" autocomplete="off">
+                <label for="username">Username</label>
+                <input id="username" type="text" name="username" placeholder="Enter a unique username" value="{{ username or '' }}" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" required>
+                <div class="camera-frame" id="camera-frame">
+                    <video id="camera" autoplay playsinline></video>
+                    <canvas id="snapshot" hidden></canvas>
+                    <div class="camera-overlay"><div class="iris-ring"></div></div>
+                    <div class="camera-note">Keep one eye clear in the frame. Centering helps, but exact placement is not required.</div>
+                    <div class="boot-sequence" id="boot-sequence">
+                        <div class="boot-card">
+                            <div class="boot-label">Sensor Startup</div>
+                            <div class="boot-title">Stand by for iris scan</div>
+                            <div class="boot-text">Starting the live camera and preparing biometric alignment.</div>
+                            <div class="boot-bar"><span></span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="capture-metrics">
+                    <div class="metric-pill"><strong>Lighting</strong><div class="metric-value" id="lighting-value">Waiting</div></div>
+                    <div class="metric-pill"><strong>Sharpness</strong><div class="metric-value" id="sharpness-value">Waiting</div></div>
+                    <div class="metric-pill"><strong>Readiness</strong><div class="metric-value" id="readiness-value">Idle</div></div>
+                </div>
+                <div class="capture-options">
+                    <label><input id="auto-capture" type="checkbox"> Auto-capture when ready</label>
+                    <span id="capture-mode-label">Manual capture mode</span>
+                </div>
+                <div class="camera-actions">
+                    <button class="secondary" type="button" id="start-camera">Start Camera</button>
+                    <button class="secondary" type="button" id="capture-frame">Capture Sample</button>
+                </div>
+                <input type="hidden" id="image_data" name="image_data">
+                <div class="status" id="camera-status">Camera offline. Start capture to begin enrollment.</div>
+                <div class="status" style="margin-top:-4px;">Use moderate lighting, keep one eye visible, and avoid extra faces in frame.</div>
+                <button class="primary" id="submit-button" type="submit"><span class="submit-loader"></span><span class="button-label">Register Iris Identity</span></button>
+            </form>
+            <div class="panel-footer">
+                <span>Need access verification instead?</span>
+                <a href="/login">Go to secure login</a>
+            </div>
+        </section>
+    </main>
+    <script>
+        const video = document.getElementById("camera"), canvas = document.getElementById("snapshot"), imageDataField = document.getElementById("image_data"), statusText = document.getElementById("camera-status"), form = document.getElementById("iris-form"), lightingValue = document.getElementById("lighting-value"), sharpnessValue = document.getElementById("sharpness-value"), readinessValue = document.getElementById("readiness-value"), autoCapture = document.getElementById("auto-capture"), captureModeLabel = document.getElementById("capture-mode-label"), submitButton = document.getElementById("submit-button"), cameraFrame = document.getElementById("camera-frame"), bootSequence = document.getElementById("boot-sequence"); let mediaStream; let analysisTimer; let readyFrames = 0; let autoCaptured = false; let bootTimer;
+        function resetCaptureState() { readyFrames = 0; autoCaptured = false; imageDataField.value = ""; readinessValue.textContent = "Idle"; cameraFrame.classList.remove("ready"); }
+        function showBootSequence() { clearTimeout(bootTimer); bootSequence.classList.remove("hidden"); cameraFrame.classList.add("scanning"); bootTimer = setTimeout(function () { bootSequence.classList.add("hidden"); cameraFrame.classList.remove("scanning"); }, 1800); }
+        function updateCaptureMetrics() { if (!mediaStream || !video.videoWidth || imageDataField.value) { return; } const analysisCanvas = document.createElement("canvas"); analysisCanvas.width = 200; analysisCanvas.height = 150; const analysisContext = analysisCanvas.getContext("2d"); analysisContext.drawImage(video, 0, 0, analysisCanvas.width, analysisCanvas.height); const frame = analysisContext.getImageData(0, 0, analysisCanvas.width, analysisCanvas.height).data; let brightnessTotal = 0; let sharpnessTotal = 0; for (let i = 0; i < frame.length; i += 4) { const gray = (frame[i] + frame[i + 1] + frame[i + 2]) / 3; brightnessTotal += gray; if (i >= 4) { const previousGray = (frame[i - 4] + frame[i - 3] + frame[i - 2]) / 3; sharpnessTotal += Math.abs(gray - previousGray); } } const pixels = frame.length / 4; const brightness = brightnessTotal / pixels; const sharpness = sharpnessTotal / pixels; const ready = brightness >= 78 && sharpness >= 14; lightingValue.textContent = brightness < 70 ? "Low" : brightness < 135 ? "Good" : "Bright"; sharpnessValue.textContent = sharpness < 12 ? "Soft" : sharpness < 22 ? "Stable" : "Sharp"; readinessValue.textContent = ready ? "Ready" : "Adjust"; cameraFrame.classList.toggle("ready", ready); if (ready) { readyFrames += 1; } else { readyFrames = 0; autoCaptured = false; } if (autoCapture.checked && readyFrames >= 4 && !autoCaptured) { autoCaptured = true; captureFrame(true); } }
+        async function startCamera() { try { mediaStream = await navigator.mediaDevices.getUserMedia({ video: true }); video.srcObject = mediaStream; resetCaptureState(); showBootSequence(); statusText.textContent = "Camera active. Keep one eye visible and steady, then capture a sample."; clearInterval(analysisTimer); analysisTimer = setInterval(updateCaptureMetrics, 700); } catch (error) { statusText.textContent = "Camera access failed. Use localhost or HTTPS and allow browser camera permission."; } }
+        function captureFrame(autoMode = false) { if (!mediaStream) { statusText.textContent = "Start the camera before capturing a sample."; return; } canvas.width = video.videoWidth || 640; canvas.height = video.videoHeight || 480; const context = canvas.getContext("2d"); context.drawImage(video, 0, 0, canvas.width, canvas.height); imageDataField.value = canvas.toDataURL("image/jpeg", 0.92); autoCaptured = true; statusText.textContent = autoMode ? "Sample auto-captured. Submit the form to complete registration." : "Sample captured. Submit the form to complete registration."; }
+        document.getElementById("start-camera").addEventListener("click", startCamera);
+        document.getElementById("capture-frame").addEventListener("click", captureFrame);
+        autoCapture.addEventListener("change", function () { captureModeLabel.textContent = autoCapture.checked ? "Auto-capture enabled" : "Manual capture mode"; if (!autoCapture.checked) { autoCaptured = false; } });
+        form.addEventListener("submit", function (event) { if (!imageDataField.value) { event.preventDefault(); statusText.textContent = "Capture an iris sample before submitting registration."; return; } submitButton.classList.add("loading"); submitButton.querySelector(".button-label").textContent = "Registering biometric identity..."; });
+    </script>
+</body>
+</html>

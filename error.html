@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IrisPass | Request Error</title>
+    <style>
+        body { margin:0; min-height:100vh; display:grid; place-items:center; padding:28px; font-family:"Aptos","Trebuchet MS",sans-serif; color:#effaf6; background:linear-gradient(140deg,#051019,#0f2434); }
+        .panel { width:min(620px,100%); padding:36px; border:1px solid rgba(139,234,205,.22); border-radius:22px; background:rgba(8,18,29,.82); box-shadow:0 24px 70px rgba(0,0,0,.34); text-align:center; }
+        h1 { margin:0 0 12px; font-size:2rem; }
+        p { margin:0 0 22px; color:#9cb8b0; line-height:1.7; }
+        a { display:inline-block; padding:13px 18px; border-radius:14px; background:#91f2cb; color:#062116; font-weight:700; text-decoration:none; }
+    </style>
+</head>
+<body>
+    <main class="panel">
+        <h1>Request could not be completed</h1>
+        <p>{{ message }}</p>
+        <a href="/login">Back to Login</a>
+    </main>
+</body>
+</html>
